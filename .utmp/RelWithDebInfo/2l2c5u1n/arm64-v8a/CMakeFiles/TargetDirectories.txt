@@ -1,0 +1,8 @@
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/GameActivity/CMakeFiles/game.dir
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/.utmp/RelWithDebInfo/2l2c5u1n/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir

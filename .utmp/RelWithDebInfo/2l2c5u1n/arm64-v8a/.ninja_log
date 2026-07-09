@@ -1,0 +1,13 @@
+# ninja log v5
+10	319	1783017063320658529	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	f93b9f5db8dfd52
+320	712	1783017063671653994	/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2l2c5u1n/obj/arm64-v8a/libswappywrapper.so	9cf531bf6bbc55b0
+6	159	1783024379812799368	/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2l2c5u1n/obj/arm64-v8a/libswappywrapper.so	9cf531bf6bbc55b0
+5	1005	1783024380648450093	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	184b8f246e93a44f
+4	1026	1783024380674047628	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	aedfdcb86d67866e
+4	1047	1783024380694703577	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	7a410cd6fc934449
+5	1063	1783024380710210155	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	169b9496c0e01bbb
+4	1113	1783024380760250660	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	43ae2e212983dad7
+5	1157	1783024380802320198	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	61652fd70a8db0a7
+5	1346	1783024380994601837	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	b1b24fe0ec3d24bb
+3	1473	1783024381119425791	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	1af9fc1030437e08
+1473	1503	1783024381157762373	/home/rajdeep/Desktop/NSS Researchh/Game2/IronholdEndlessSiege/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2l2c5u1n/obj/arm64-v8a/libgame.so	3bc927384a1024a2

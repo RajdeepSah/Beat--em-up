@@ -1,0 +1,35 @@
+plugins {
+    // If you are changing the Android Gradle Plugin version, make sure it is compatible with the Gradle version preinstalled with Unity
+    // See which Gradle version is preinstalled with Unity here https://docs.unity3d.com/Manual/android-gradle-overview.html
+    // See official Gradle and Android Gradle Plugin compatibility table here https://developer.android.com/studio/releases/gradle-plugin#updating-gradle
+    // To specify a custom Gradle version in Unity, go do "Preferences > External Tools", uncheck "Gradle Installed with Unity (recommended)" and specify a path to a custom Gradle version
+    id 'com.android.application' version '9.0.0' apply false
+    id 'com.android.library' version '9.0.0' apply false
+    **BUILD_SCRIPT_DEPS**
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}
+
+// -----------------------------------------------------------------------------
+// Kotlin stdlib duplicate-class fix.
+// com.android.billingclient:billing:9.0.0 pulls in kotlin-stdlib:1.8.22, while
+// androidx.games:games-activity / games-frame-pacing (and appcompat) pull in the
+// older kotlin-stdlib-jdk7:1.6.21 and kotlin-stdlib-jdk8:1.6.21. Since Kotlin 1.8
+// folded the jdk7/jdk8 classes into the main kotlin-stdlib, having both on the
+// classpath causes ":launcher:checkReleaseDuplicateClasses" to fail with
+// "Duplicate class kotlin.*.jdk*..." errors.
+//
+// Forcing the jdk7/jdk8 artifacts up to 1.8.22 resolves it: at 1.8+ those two
+// artifacts are empty stubs that only depend on kotlin-stdlib, so the duplicated
+// classes are gone. Applied to allprojects so it also covers the :launcher module
+// where the duplicate check runs on the merged runtime classpath.
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+        }
+    }
+}
