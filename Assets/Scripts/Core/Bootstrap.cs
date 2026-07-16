@@ -24,12 +24,16 @@ namespace Ironhold
         private async void Start()
         {
             ApplyAppSettings();
+            SettingsService.LoadAndApply();   // audio/shake/haptics reflect saved prefs from frame one
             ClearDefaultSceneObjects();
 
             // ---- Load shared sprites / textures (all pipeline-agnostic) ----
-            Sprite buttonSprite = RenderUtil.LoadSprite(GameConfig.TexButton);
-            Sprite panelSprite = RenderUtil.LoadSprite(GameConfig.TexPanel);
-            Sprite titleSprite = RenderUtil.LoadSprite(GameConfig.TexTitle);
+            // Registry loads every UI sprite once (panel 9-sliced, glyphs/icons/badges/frame); nulls are
+            // handled gracefully downstream. Local aliases keep the existing Build(...) signatures.
+            UISprites.LoadAll();
+            Sprite buttonSprite = UISprites.Button;
+            Sprite panelSprite = UISprites.Panel;
+            Sprite titleSprite = UISprites.Title;
             Texture2D floorTex = RenderUtil.LoadTexture(GameConfig.TexFloor);
             Texture2D wallTex = RenderUtil.LoadTexture(GameConfig.TexWall);
             Texture2D skyTex = RenderUtil.LoadTexture(GameConfig.TexSkybox);
@@ -89,11 +93,13 @@ namespace Ironhold
             gm.Menu = uiGo.AddComponent<MenuController>();
             gm.Pause = uiGo.AddComponent<PauseController>();
             gm.GameOverUI = uiGo.AddComponent<GameOverController>();
+            var settings = uiGo.AddComponent<SettingsController>();
 
             gm.Hud.Build(canvas, player, panelSprite, buttonSprite);
             gm.Menu.Build(canvas, titleSprite, panelSprite);
             gm.Pause.Build(canvas, panelSprite);
             gm.GameOverUI.Build(canvas, panelSprite);
+            settings.Build(canvas, panelSprite);   // built last -> layers above the other screens
 
             gm.GoToMenu();
         }

@@ -21,6 +21,8 @@ namespace Ironhold
         // ---- Player ----
         public const float PlayerMaxHP = 100f;
         public const float PlayerMoveSpeed = 4.5f;     // metres / second
+        public const float PlayerMoveAccel = 45f;      // m/s^2 ramp up to speed (~0.1s) -> weighty, not floaty
+        public const float PlayerMoveDecel = 60f;      // m/s^2 ramp down to zero (snappier stop than start)
         public const float PlayerMaxStamina = 100f;
         public const float StaminaRegenPerSec = 20f;
         public const float StaminaRegenDelay = 0.8f;   // seconds after last action before regen resumes
@@ -159,6 +161,11 @@ namespace Ironhold
         public const float PoseSmoothPosK = 12f;           // exp smoothing (framerate independent)
         public const float PoseSmoothRotK = 10f;
 
+        // ---- Feel: audio & camera runtime knobs ----
+        public const float SfxPitchMin = 0.94f;    // per-shot pitch jitter so repeated hits/steps aren't mechanical
+        public const float SfxPitchMax = 1.06f;
+        public static float ShakeScale = 1f;        // camera-shake intensity multiplier (Settings screen; NOT const)
+
         // ---- Scoring (section 9) ----
         public const float ComboDecaySeconds = 3.0f;       // no-kill window before combo resets
         public const int WaveClearBonusPerWave = 200;      // 200 * waveNumber
@@ -202,6 +209,27 @@ namespace Ironhold
         public const string TexPanel = "Art/UI/Panel_Stone";
         public const string TexTitle = "Art/UI/Menu/TitleImage_16x9";
         public const string TexIcon = "Art/Icon/AppIcon_1024";
+
+        // ---- New UI icon / glyph art (Resources/Art/UI/Icons) ----
+        public const string GlyphArrow = "Art/UI/Icons/Glyph_Arrow";      // mirrored in code for LEFT
+        public const string GlyphPunch = "Art/UI/Icons/Glyph_Punch";
+        public const string GlyphSword = "Art/UI/Icons/Glyph_Sword";
+        public const string GlyphBlock = "Art/UI/Icons/Glyph_Block";
+        public const string GlyphRoll = "Art/UI/Icons/Glyph_Roll";
+        public const string GlyphSettings = "Art/UI/Icons/Glyph_Settings";
+        public const string IconHealth = "Art/UI/Icons/Icon_Health";
+        public const string IconStamina = "Art/UI/Icons/Icon_Stamina";
+        public const string IconCoin = "Art/UI/Icons/Icon_Coin";
+        public const string IconWave = "Art/UI/Icons/Icon_Wave";
+        public const string FrameBar = "Art/UI/Frame_Bar";
+        public const float FrameBarBorderPx = 120f;   // horizontal 9-slice end-cap width @1024
+        /// <summary>Style-tier badge sprites, index-aligned with <see cref="StyleTierNames"/> (D,C,B,A,S).</summary>
+        public static readonly string[] TierBadgePaths =
+        {
+            "Art/UI/Icons/Icon_Tier_D", "Art/UI/Icons/Icon_Tier_C", "Art/UI/Icons/Icon_Tier_B",
+            "Art/UI/Icons/Icon_Tier_A", "Art/UI/Icons/Icon_Tier_S",
+        };
+
         public const string VoFolder = "Audio/VO/";
         public const string SfxFolder = "Audio/SFX/";
         public const string MusicFolder = "Audio/Music/";

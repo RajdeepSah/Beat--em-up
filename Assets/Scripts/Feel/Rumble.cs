@@ -9,6 +9,9 @@ namespace Ironhold
     /// </summary>
     public static class Rumble
     {
+        /// <summary>Master haptics toggle (Settings screen). When false all vibration is suppressed.</summary>
+        public static bool Enabled = true;
+
         public static void Light() => Vibrate(15, 80);
         public static void Heavy() => Vibrate(30, 160);
         public static void Hurt() => Vibrate(40, 255);
@@ -21,7 +24,7 @@ namespace Ironhold
 
         private static void Vibrate(long ms, int amplitude)
         {
-            if (s_Broken) return;
+            if (!Enabled || s_Broken) return;
             try
             {
                 if (s_Vibrator == null)

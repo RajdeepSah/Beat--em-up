@@ -33,6 +33,15 @@ namespace Ironhold
         private readonly Dictionary<Line, AudioClip> _clips = new Dictionary<Line, AudioClip>();
         private AudioSource _source;
 
+        // Rate-limit: without this, combo/low-HP/guard-break lines stampede and cut each other off
+        // in busy combat. Frequent "chatter" is throttled; story-critical lines always interrupt.
+        private const float MinGapSeconds = 4f;
+        private float _lastPlayTime = -999f;
+
+        private static bool IsPriority(Line line) =>
+            line == Line.RunStart || line == Line.GameOver || line == Line.Wave2 ||
+            line == Line.WaveBrute || line == Line.WaveMilestone || line == Line.WaveCleared;
+
         private void Awake()
         {
             _source = GetComponent<AudioSource>();
@@ -49,6 +58,9 @@ namespace Ironhold
         public void Play(Line line)
         {
             if (!_clips.TryGetValue(line, out var clip) || clip == null) return;
+            // Don't let low-priority chatter interrupt a line that's still playing within the cooldown.
+            if (!IsPriority(line) && _source.isPlaying && Time.unscaledTime - _lastPlayTime < MinGapSeconds) return;
+            _lastPlayTime = Time.unscaledTime;
             _source.Stop();
             _source.clip = clip;
             _source.Play();

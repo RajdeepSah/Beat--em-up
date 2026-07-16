@@ -138,7 +138,7 @@ namespace Ironhold
             int newMult = Score.Multiplier;
             if (prevMult < 3 && newMult >= 3) Announcer?.Play(AnnouncerVO.Line.ComboX3);
             if (prevMult < 5 && newMult >= 5) Announcer?.Play(AnnouncerVO.Line.ComboX5);
-            if (newMult > prevMult) Sfx?.Play(SfxManager.ComboUp);
+            if (newMult > prevMult) Sfx?.Play(SfxManager.ComboUp, 1f, vary: false);
         }
 
         private void SetState(GameState s)

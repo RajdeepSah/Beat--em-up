@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,15 @@ namespace Ironhold
     {
         private static readonly Collider[] s_Buffer = new Collider[32];
         private static readonly List<IDamageable> s_Hits = new List<IDamageable>(16);
+
+        // Cached nearest-first comparer + origin so the sort doesn't allocate a closure every swing.
+        private static float s_OriginX;
+        private static readonly Comparison<IDamageable> s_NearestFirst = (a, b) =>
+        {
+            float da = Mathf.Abs(a.Transform.position.x - s_OriginX);
+            float db = Mathf.Abs(b.Transform.position.x - s_OriginX);
+            return da.CompareTo(db);
+        };
 
         public static int ApplyMelee(
             Vector3 attackerPos,
@@ -45,13 +55,9 @@ namespace Ironhold
                 if (!s_Hits.Contains(d)) s_Hits.Add(d);
             }
 
-            // Nearest first so cleave hits the closest enemies.
-            s_Hits.Sort((a, b) =>
-            {
-                float da = Mathf.Abs(a.Transform.position.x - attackerPos.x);
-                float db = Mathf.Abs(b.Transform.position.x - attackerPos.x);
-                return da.CompareTo(db);
-            });
+            // Nearest first so cleave hits the closest enemies (cached comparer, no per-swing closure).
+            s_OriginX = attackerPos.x;
+            s_Hits.Sort(s_NearestFirst);
 
             int applied = 0;
             for (int i = 0; i < s_Hits.Count && applied < maxTargets; i++)

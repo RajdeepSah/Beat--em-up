@@ -38,9 +38,10 @@ namespace Ironhold
             _pool = new Entry[PoolSize];
             for (int i = 0; i < PoolSize; i++)
             {
+                // outline:false — these fade their alpha every frame; a fixed-colour outline wouldn't.
                 var t = UIFactory.Label("Dmg" + i, root, "", 30, TextAnchor.MiddleCenter, Color.white,
                     new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                    Vector2.zero, new Vector2(200f, 50f));
+                    Vector2.zero, new Vector2(200f, 50f), outline: false);
                 t.gameObject.SetActive(false);
                 _pool[i] = new Entry { Text = t, Rect = t.rectTransform };
             }

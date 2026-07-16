@@ -34,6 +34,10 @@ namespace Ironhold
         public const string EnemyWindup = "sfx_enemy_windup";
         public const string Parry = "sfx_parry";
 
+        /// <summary>Master SFX bus level (0..1), driven by the Settings screen. Static so callers
+        /// and SettingsService can set it without holding a reference to the (Bootstrap-owned) instance.</summary>
+        public static float BusVolume = 1f;
+
         private readonly Dictionary<string, AudioClip> _cache = new Dictionary<string, AudioClip>();
         private AudioSource _source;
 
@@ -44,7 +48,9 @@ namespace Ironhold
             _source.spatialBlend = 0f;
         }
 
-        public void Play(string key, float volume = 1f)
+        /// <param name="vary">Randomise pitch slightly so repeated hits/steps don't sound mechanical.
+        /// Pass false for tonal cues (combo-up, UI click) that should stay at their authored pitch.</param>
+        public void Play(string key, float volume = 1f, bool vary = true)
         {
             if (string.IsNullOrEmpty(key)) return;
             if (!_cache.TryGetValue(key, out var clip))
@@ -52,7 +58,10 @@ namespace Ironhold
                 clip = Resources.Load<AudioClip>(GameConfig.SfxFolder + key); // null if not supplied
                 _cache[key] = clip;
             }
-            if (clip != null) _source.PlayOneShot(clip, volume);
+            if (clip == null) return;
+            // One shared source, so concurrent one-shots adopt the latest pitch — fine for short SFX.
+            _source.pitch = vary ? Random.Range(GameConfig.SfxPitchMin, GameConfig.SfxPitchMax) : 1f;
+            _source.PlayOneShot(clip, volume * BusVolume);
         }
     }
 }

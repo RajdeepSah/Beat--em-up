@@ -77,7 +77,10 @@ namespace Ironhold
         private void Update()
         {
             if (!_renderer.enabled) return;
-            _timer -= Time.deltaTime;
+            // Unscaled: heavy attacks fire the arc AND a hit-stop on the same frame, so on scaled
+            // time the arc would freeze exactly while it should be sweeping. Match the rest of the
+            // juice layer (sparks/flash/numbers), which all run unscaled.
+            _timer -= Time.unscaledDeltaTime;
             if (_timer <= 0f)
             {
                 _renderer.enabled = false;
@@ -89,7 +92,7 @@ namespace Ironhold
             if (_material.HasProperty("_TintColor")) _material.SetColor("_TintColor", c);
             else _material.color = c;
             // slight forward sweep while fading
-            transform.position += new Vector3(_facing * 2.2f * Time.deltaTime, 0f, 0f);
+            transform.position += new Vector3(_facing * 2.2f * Time.unscaledDeltaTime, 0f, 0f);
         }
     }
 }

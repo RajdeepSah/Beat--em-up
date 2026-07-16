@@ -29,6 +29,7 @@ namespace Ironhold
         private bool _hitRetrigger;
         private float _vY;
         private float _kbVel; // decaying knockback impulse along X (m/s)
+        private float _moveVel; // ramped locomotion speed along X (m/s) — accel/decel, not binary
         private float _stepAccum; // metres walked since the last footstep sfx
 
         private void Awake()
@@ -72,6 +73,7 @@ namespace Ironhold
             FacingSign = 1f;
             _vY = 0f;
             _kbVel = 0f;
+            _moveVel = 0f;
             _skeletal?.ResetToIdle();
             TeleportTo(new Vector3(0f, 0.1f, GameConfig.PlayZ));
         }
@@ -119,7 +121,13 @@ namespace Ironhold
             _moving = move != 0;
             if (move != 0) FacingSign = move;
 
-            float horizontal = move * GameConfig.PlayerMoveSpeed;
+            // Ramp toward the target speed instead of snapping — a short accel/decel gives the knight
+            // weight and reads far more natural. Stays on scaled Time.deltaTime so it still freezes
+            // correctly during hit-stop. Facing (above) still snaps so the turn is instant.
+            float targetVel = move * GameConfig.PlayerMoveSpeed;
+            float ramp = (move != 0 ? GameConfig.PlayerMoveAccel : GameConfig.PlayerMoveDecel) * Time.deltaTime;
+            _moveVel = Mathf.MoveTowards(_moveVel, targetVel, ramp);
+            float horizontal = _moveVel;
 
             // Dodge roll: ease-out translation along the roll direction, facing locked to it.
             if (_combat != null && _combat.IsDodging)

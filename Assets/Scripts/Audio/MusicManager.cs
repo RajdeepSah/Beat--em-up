@@ -15,6 +15,10 @@ namespace Ironhold
         private const float IntenseMax = 0.30f;
         private const float FadeSpeed = 1.2f; // volume units / second
 
+        /// <summary>Music-bus level (0..1), driven by the Settings screen. Static so SettingsService can
+        /// set it without a reference (this manager is created anonymously by Bootstrap).</summary>
+        public static float Volume01 = 1f;
+
         private AudioSource _menu, _base, _intense;
         private bool _started;
 
@@ -58,9 +62,9 @@ namespace Ironhold
                 crowd = Mathf.Clamp01((gm.Waves.AliveCount - 2) / 6f);
 
             float dt = Time.unscaledDeltaTime * FadeSpeed;
-            _menu.volume = Mathf.MoveTowards(_menu.volume, inCombat ? 0f : MenuVolume, dt);
-            _base.volume = Mathf.MoveTowards(_base.volume, inCombat ? CombatVolume : 0f, dt);
-            _intense.volume = Mathf.MoveTowards(_intense.volume, inCombat ? IntenseMax * crowd : 0f, dt);
+            _menu.volume = Mathf.MoveTowards(_menu.volume, (inCombat ? 0f : MenuVolume) * Volume01, dt);
+            _base.volume = Mathf.MoveTowards(_base.volume, (inCombat ? CombatVolume : 0f) * Volume01, dt);
+            _intense.volume = Mathf.MoveTowards(_intense.volume, (inCombat ? IntenseMax * crowd : 0f) * Volume01, dt);
         }
     }
 }

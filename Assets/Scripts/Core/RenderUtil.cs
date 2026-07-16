@@ -78,5 +78,21 @@ namespace Ironhold
             if (tex == null) return null;
             return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
         }
+
+        /// <summary>
+        /// Load a texture as a 9-sliceable Sprite so framed panels keep a constant border at any size
+        /// instead of stretching. <paramref name="borderPx"/> is the frame inset in source pixels;
+        /// <paramref name="ppu"/> (pixels-per-unit) tunes rendered border thickness — higher = thinner.
+        /// Consume with Image.type = Sliced (see UIFactory.PanelButton).
+        /// </summary>
+        public static Sprite LoadSpriteSliced(string resourcePath, float borderPx, float ppu)
+        {
+            Texture2D tex = Resources.Load<Texture2D>(resourcePath);
+            if (tex == null) return null;
+            float b = Mathf.Min(borderPx, Mathf.Min(tex.width, tex.height) * 0.5f - 1f);
+            var border = new Vector4(b, b, b, b);
+            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f),
+                ppu, 0, SpriteMeshType.FullRect, border);
+        }
     }
 }

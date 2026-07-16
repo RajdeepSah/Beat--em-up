@@ -15,6 +15,8 @@ namespace Ironhold
 
         private Renderer[] _renderers;
         private Material[][] _original;
+        private Material[][] _whiteSwap;   // pre-filled per-renderer arrays (no per-hit allocation)
+        private Material[][] _emberSwap;
         private float _timer;
         private bool _swapped;
 
@@ -26,26 +28,34 @@ namespace Ironhold
             if (visualRoot == null) { _renderers = null; return; }
             _renderers = visualRoot.GetComponentsInChildren<Renderer>(true);
             _original = new Material[_renderers.Length][];
+            _whiteSwap = new Material[_renderers.Length][];
+            _emberSwap = new Material[_renderers.Length][];
             for (int i = 0; i < _renderers.Length; i++)
+            {
                 _original[i] = _renderers[i].sharedMaterials;
+                int n = _original[i].Length;
+                var w = new Material[n];
+                var e = new Material[n];
+                for (int m = 0; m < n; m++) { w[m] = WhiteMat(); e[m] = EmberMat(); }
+                _whiteSwap[i] = w;
+                _emberSwap[i] = e;
+            }
         }
 
-        public void FlashWhite(float duration = GameConfig.HitFlashTime) => Flash(WhiteMat(), duration);
-        public void FlashEmber(float duration = GameConfig.HitFlashTime) => Flash(EmberMat(), duration);
+        public void FlashWhite(float duration = GameConfig.HitFlashTime) => Flash(_whiteSwap, duration);
+        public void FlashEmber(float duration = GameConfig.HitFlashTime) => Flash(_emberSwap, duration);
 
         /// <summary>One short ember pulse (wind-up telegraph). Safe to call repeatedly.</summary>
-        public void TelegraphPulse() => Flash(EmberMat(), 0.07f);
+        public void TelegraphPulse() => Flash(_emberSwap, 0.07f);
 
-        private void Flash(Material mat, float duration)
+        private void Flash(Material[][] swap, float duration)
         {
-            if (!IsInitialized) return;
+            if (!IsInitialized || swap == null) return;
             for (int i = 0; i < _renderers.Length; i++)
             {
                 var r = _renderers[i];
                 if (r == null) continue;
-                var mats = new Material[_original[i].Length];
-                for (int m = 0; m < mats.Length; m++) mats[m] = mat;
-                r.sharedMaterials = mats;
+                r.sharedMaterials = swap[i];   // cached array — no allocation in the combat hot path
             }
             _swapped = true;
             _timer = Mathf.Max(_timer, duration);

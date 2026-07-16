@@ -3,45 +3,53 @@ using UnityEngine.UI;
 
 namespace Ironhold
 {
-    /// <summary>Game-over screen (section 13): THE KEEP HAS FALLEN, wave reached, score, best, RESTART, MAIN MENU.</summary>
+    /// <summary>Game-over screen: THE KEEP HAS FALLEN, wave reached, score, best, RESTART, MAIN MENU.
+    /// Full-bleed scrim on the root; content under a safe-area root. Fades in via UITransition.</summary>
     public class GameOverController : MonoBehaviour
     {
         private RectTransform _root;
+        private UITransition _transition;
         private Text _waveText, _scoreText, _bestText;
 
         public void Build(Transform canvas, Sprite panelSprite)
         {
             _root = UIFactory.FullScreen("GameOver", canvas);
-            UIFactory.Image("GoScrim", _root, null, new Color(0.04f, 0.05f, 0.08f, 0.88f),
+            _root.gameObject.AddComponent<CanvasGroup>();
+            _transition = _root.gameObject.AddComponent<UITransition>();
+
+            UIFactory.Image("GoScrim", _root, null, new Color(0.04f, 0.05f, 0.08f, 0.9f),
                 Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, raycast: true);
 
-            UIFactory.Label("GoTitle", _root, "THE KEEP HAS FALLEN", 70, TextAnchor.MiddleCenter, GameConfig.EmberOrange,
-                new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -180), new Vector2(1400, 100));
+            var safe = UILayout.SafeAreaRoot("GameOverSafe", _root);
 
-            _waveText = UIFactory.Label("GoWave", _root, "WAVE REACHED: 1", 40, TextAnchor.MiddleCenter, Color.white,
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 170), new Vector2(900, 56));
-            _scoreText = UIFactory.Label("GoScore", _root, "SCORE: 0", 52, TextAnchor.MiddleCenter, Color.white,
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 90), new Vector2(900, 70));
-            _bestText = UIFactory.Label("GoBest", _root, "BEST: 0", 36, TextAnchor.MiddleCenter, new Color(1, 1, 1, 0.9f),
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 30), new Vector2(900, 50));
+            UIFactory.Label("GoTitle", safe, "THE KEEP HAS FALLEN", UITheme.H1, TextAnchor.MiddleCenter, GameConfig.EmberOrange,
+                new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -150), new Vector2(1400, 100), shadow: true);
 
-            var restart = UIFactory.PanelButton("RestartGo", _root, "RESTART", 44,
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, -90), new Vector2(440, 100), panelSprite);
+            _waveText = UIFactory.Label("GoWave", safe, "WAVE REACHED: 1", 40, TextAnchor.MiddleCenter, Color.white,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 176), new Vector2(900, 56));
+            _scoreText = UIFactory.Label("GoScore", safe, "SCORE: 0", 52, TextAnchor.MiddleCenter, Color.white,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 96), new Vector2(900, 70));
+            _bestText = UIFactory.Label("GoBest", safe, "BEST: 0", 36, TextAnchor.MiddleCenter, UITheme.TextPrimary,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 34), new Vector2(900, 50));
+
+            float w = UITheme.MenuBtnWidth, h = 96f;
+            var restart = UIFactory.PanelButton("RestartGo", safe, "RESTART", 44,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, -84), new Vector2(w, h), panelSprite);
             restart.OnDown = () => GameManager.Instance?.Restart();
 
-            var menu = UIFactory.PanelButton("MenuGo", _root, "MAIN MENU", 38,
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, -210), new Vector2(440, 90), panelSprite);
+            var menu = UIFactory.PanelButton("MenuGo", safe, "MAIN MENU", 38,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, -196), new Vector2(w, h), panelSprite);
             menu.OnDown = () => GameManager.Instance?.QuitToMenu();
 
             var gm = GameManager.Instance;
             if (gm != null) gm.StateChanged += OnStateChanged;
-            OnStateChanged(gm != null ? gm.State : GameState.Menu);
+            _transition.SetShownImmediate((gm != null ? gm.State : GameState.Menu) == GameState.GameOver);
         }
 
         private void OnStateChanged(GameState s)
         {
             bool over = s == GameState.GameOver;
-            if (_root != null) _root.gameObject.SetActive(over);
+            if (_transition != null) { if (over) _transition.Show(); else _transition.Hide(); }
             if (over)
             {
                 var gm = GameManager.Instance;
@@ -57,7 +65,7 @@ namespace Ironhold
                     else
                     {
                         _bestText.text = "BEST: " + gm.Score.Best.ToString("N0");
-                        _bestText.color = new Color(1, 1, 1, 0.9f);
+                        _bestText.color = UITheme.TextPrimary;
                     }
                 }
             }

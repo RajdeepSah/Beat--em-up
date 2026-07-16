@@ -69,7 +69,7 @@ namespace Ironhold
             _trauma = Mathf.Clamp01(_trauma + _pendingTrauma);
             _pendingTrauma = 0f;
             _trauma = Mathf.Max(0f, _trauma - GameConfig.TraumaDecayPerSec * udt);
-            float shake = _trauma * _trauma;
+            float shake = _trauma * _trauma * GameConfig.ShakeScale;   // Settings-driven intensity (accessibility)
             _noiseT += udt * GameConfig.ShakeFreq;
             float offX = (Mathf.PerlinNoise(_noiseT, 0.37f) * 2f - 1f) * GameConfig.ShakeMaxOffset * shake;
             float offY = (Mathf.PerlinNoise(0.71f, _noiseT) * 2f - 1f) * GameConfig.ShakeMaxOffset * shake;
